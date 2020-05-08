@@ -4,6 +4,8 @@ output:
   html_notebook: 
     theme: cerulean
     highlight: textmate
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -54,11 +56,31 @@ Let's instantiate the VGG16 model:
 
 ```{r, echo=TRUE, results='hide'}
 library(keras)
+library(tensorflow)
+reticulate::use_python("C:/Users/mprummer/AppData/Local/Continuum/miniconda3/envs/r-reticulate/")
+reticulate::py_config()
+
+## edit from original keras function:
+application_vgg16 = function (include_top = TRUE, weights = "imagenet", input_tensor = NULL, 
+  input_shape = NULL, pooling = NULL, classes = 1000) 
+{
+  # MP: comment out next line
+  #verify_application_prerequistes()
+  # MP: prefix "tf$" to next line.
+  tf$keras$applications$VGG16(include_top = include_top, weights = weights, 
+    input_tensor = input_tensor, 
+    # MP: comment out next line, include succeeding line
+    #input_shape = normalize_shape(input_shape)
+    input_shape = input_shape, 
+    pooling = pooling, classes = as.integer(classes))
+}
+
 
 conv_base <- application_vgg16(
   weights = "imagenet",
   include_top = FALSE,
-  input_shape = c(150, 150, 3)
+  # MP: include "L"s 
+  input_shape = c(150L, 150L, 3L)
 )
 ```
 
